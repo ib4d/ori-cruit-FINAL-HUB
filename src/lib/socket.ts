@@ -1,3 +1,5 @@
+import { getWebSocketUrl } from './api';
+
 type SocketCallback = (data: any) => void;
 
 class SocketManager {
@@ -10,9 +12,8 @@ class SocketManager {
   }
 
   private connect() {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host = window.location.host;
-    this.socket = new WebSocket(`${protocol}//${host}`);
+    const wsUrl = getWebSocketUrl();
+    this.socket = new WebSocket(wsUrl);
 
     this.socket.onopen = () => {
       console.log("WS: Connected to server");
