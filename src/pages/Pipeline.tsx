@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import { MoreHorizontal, Calendar, AlertCircle, User, ShieldCheck, Filter, Plus, X } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -37,7 +38,42 @@ export default function Pipeline() {
       if (!res.ok) throw new Error('Failed to update stage');
       return res.json();
     },
+    onMutate: async ({ id, stage }) => {
+      await queryClient.cancelQueries({ queryKey: ['pipeline'] });
+      await queryClient.cancelQueries({ queryKey: ['candidates'] });
+      const previousPipeline = queryClient.getQueryData<any>(['pipeline']);
+      const previousCandidates = queryClient.getQueryData<any>(['candidates']);
+
+      queryClient.setQueryData(['pipeline'], (oldData: any) => {
+        if (!oldData) return oldData;
+        const cloned = JSON.parse(JSON.stringify(oldData));
+        for (const key in cloned) {
+          cloned[key] = cloned[key].filter((item: any) => item.id !== id);
+        }
+        const lowerStage = stage.toLowerCase();
+        if (cloned[lowerStage]) {
+          const moving = previousCandidates?.find((item: any) => item.id === id);
+          if (moving) {
+            cloned[lowerStage] = [...cloned[lowerStage], { ...moving, pipelineStage: stage }];
+          }
+        }
+        return cloned;
+      });
+
+      queryClient.setQueryData(['candidates'], (oldData: any[]) => {
+        if (!oldData) return oldData;
+        return oldData.map((candidate: any) => candidate.id === id ? { ...candidate, pipelineStage: stage } : candidate);
+      });
+
+      return { previousPipeline, previousCandidates };
+    },
+    onError: (_err, _variables, context: any) => {
+      toast.error('Pipeline update failed. Rolling back...');
+      if (context?.previousPipeline) queryClient.setQueryData(['pipeline'], context.previousPipeline);
+      if (context?.previousCandidates) queryClient.setQueryData(['candidates'], context.previousCandidates);
+    },
     onSuccess: () => {
+      toast.success('Pipeline updated successfully');
       queryClient.invalidateQueries({ queryKey: ['pipeline'] });
       queryClient.invalidateQueries({ queryKey: ['candidates'] });
     }

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import { UploadCloud, ShieldCheck, Zap, ArrowRight, MessageSquare, Database, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import React, { useRef, useState } from "react";
@@ -28,14 +29,15 @@ export default function Home() {
     },
     onSuccess: (data) => {
       if (data.length === 1) {
+        toast.success("Candidate imported successfully");
         window.location.hash = `workspace?id=${data[0].candidateId}`;
       } else {
-        alert(`Successfully imported ${data.length} candidates.`);
+        toast.success(`Successfully imported ${data.length} candidates.`);
         window.location.hash = 'pipeline';
       }
     },
-    onError: (error) => {
-      alert(`Failed to process export: ${error.message}`);
+    onError: (error: any) => {
+      toast.error(`Failed to process export: ${error?.message || 'Unknown error'}`);
     }
   });
 
@@ -75,7 +77,7 @@ export default function Home() {
       .then(filesData => {
         importMutation.mutate(filesData);
       })
-      .catch(err => alert(err.message));
+      .catch(err => toast.error(err.message));
   };
 
   const onDrop = (e: React.DragEvent) => {

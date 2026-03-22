@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 import { useTheme } from "./ThemeProvider";
 import { Sun, Moon, LayoutDashboard, Users, GitBranch, ShieldCheck, LogOut, Search, Bell, Plus, UploadCloud, ChevronDown, User, Settings, Shield } from "lucide-react";
 import { cn } from "@/src/lib/utils";
@@ -58,24 +59,26 @@ export function Layout({ children, title }: { children: React.ReactNode; title: 
       const confirmAudit = window.confirm(`Initiate specialized Legal Audit for Candidate #${candidateId}? This will perform a thorough analysis of their personal case, employability status, legal problems, and documentation.`);
       if (confirmAudit) {
         try {
-          alert("Legal Audit engine initialized. Analyzing candidate profile and transcripts...");
+          toast.loading("Legal Audit engine initialized. Analyzing candidate profile and transcripts...");
           const response = await fetch(`/api/candidates/${candidateId}/legal-audit`, { method: 'POST' });
           if (!response.ok) throw new Error("Audit failed");
           const result = await response.json();
-          alert(`Legal Audit Complete for Candidate #${candidateId}.\nStatus: ${result.legalStatus}\nRecommendation: ${result.legalAudit.recommendation}`);
+          toast.dismiss();
+          toast.success(`Legal Audit Complete for Candidate #${candidateId}. Status: ${result.legalStatus}`);
           // Refresh the page to show new data if needed
           window.dispatchEvent(new HashChangeEvent('hashchange'));
         } catch (error) {
           console.error("Legal Audit Error:", error);
-          alert("Error running legal audit. Please ensure the Gemini API key is configured.");
+          toast.error("Error running legal audit. Please ensure the Gemini API key is configured.");
         }
       }
     } else {
       const confirmAudit = window.confirm("Initiate global Legal Audit? This will scan all candidate profiles for GDPR, CCPA, and local labor law compliance.");
       if (confirmAudit) {
-        alert("Global Legal Audit engine initialized. Scanning database for compliance... Check notifications for results.");
+        toast.loading("Global Legal Audit engine initialized. Scanning database for compliance...");
         setTimeout(() => {
-          alert("Global Legal Audit Complete: 124 profiles scanned. 0 high-risk legal violations found. 2 minor documentation warnings.");
+          toast.dismiss();
+          toast.success("Global Legal Audit Complete: 124 profiles scanned. 0 high-risk legal violations found. 2 minor documentation warnings.");
         }, 3000);
       }
     }

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import { ShieldCheck, Search, Bell, LayoutDashboard, Download, Users, Settings, HelpCircle, MessageSquare, Link as LinkIcon, Verified, Trash2, CheckCircle2, Loader2, ChevronRight, X, Menu, Gavel } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -165,7 +166,9 @@ export default function Workspace() {
   const handleCopyLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
-      alert("Link copied to clipboard!");
+      toast.success("Link copied to clipboard!");
+    }).catch(() => {
+      toast.error("Unable to copy link to clipboard.");
     });
   };
 
@@ -257,10 +260,10 @@ export default function Workspace() {
             <RailIcon icon={<LayoutDashboard size={20} />} active onClick={() => window.location.hash = 'dashboard'} />
             <RailIcon icon={<Download size={20} />} onClick={handleDownload} />
             <RailIcon icon={<Users size={20} />} onClick={() => window.location.hash = 'pipeline'} />
-            <RailIcon icon={<Settings size={20} />} onClick={() => alert("Settings coming soon...")} />
+            <RailIcon icon={<Settings size={20} />} onClick={() => toast("Settings coming soon...", { icon: '⚙️' })} />
           </div>
           <div className="mt-auto">
-            <RailIcon icon={<HelpCircle size={20} />} onClick={() => alert("Help documentation is available at docs.ori-cruit.com")} />
+            <RailIcon icon={<HelpCircle size={20} />} onClick={() => toast("Help documentation is available at docs.ori-cruit.com", { icon: 'ℹ️' })} />
           </div>
         </aside>
 

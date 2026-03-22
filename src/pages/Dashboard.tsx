@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import { TrendingUp, AlertTriangle, Users, Clock, ArrowUpRight, ChevronRight, ShieldCheck, BarChart3, Zap } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import React, { useMemo, useState } from "react";
@@ -36,7 +37,7 @@ export default function Dashboard() {
           status: metrics.highRisk > 0 ? 'WARNING' : 'CLEAR',
           timestamp: new Date().toLocaleTimeString()
         });
-        alert("System-wide audit complete. Results are now visible in the compliance panel.");
+        toast.success("System-wide audit complete. Results are now visible in the compliance panel.");
       }, 2000);
     }
   });
@@ -55,7 +56,7 @@ export default function Dashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] });
-      alert("All critical compliance flags have been addressed.");
+      toast.success("All critical compliance flags have been addressed.");
     }
   });
 
@@ -259,18 +260,20 @@ export default function Dashboard() {
               
               <button 
                 onClick={() => {
-                  const confirm = window.confirm("Run specialized Legal Compliance Audit across all active profiles?");
-                  if (confirm) {
+                  const confirmValue = window.confirm("Run specialized Legal Compliance Audit across all active profiles?");
+                  if (confirmValue) {
                     setIsAuditing(true);
+                    toast.loading("Running global legal audit...");
                     setTimeout(() => {
                       setIsAuditing(false);
+                      toast.dismiss();
                       setAuditResults({
                         scanned: candidates.length,
                         flags: Math.floor(metrics.highRisk * 0.5),
                         status: 'LEGAL_REVIEW_REQUIRED',
                         timestamp: new Date().toLocaleTimeString()
                       });
-                      alert("Global Legal Audit Complete. 2 profiles flagged for visa/permit review. See individual candidate workspaces for detailed legal analysis.");
+                      toast.success("Global Legal Audit Complete. 2 profiles flagged for visa/permit review. See individual candidate workspaces for detailed legal analysis.");
                     }, 2500);
                   }
                 }}
