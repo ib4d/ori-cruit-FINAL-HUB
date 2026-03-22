@@ -6,3 +6,14 @@ coverage/
 *.log
 .env*
 !.env.example
+
+env.json
+metadata.json
+test-*.js
+*.local
+data/
+*.db
+*.db-shm
+*.db-wal
+dist/
+.env
