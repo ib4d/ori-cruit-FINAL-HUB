@@ -321,7 +321,7 @@ export default function Workspace() {
                 <Menu size={16} />
               </button>
               <div>
-                <h1 className="text-sm font-black uppercase tracking-widest truncate max-w-[150px] sm:max-w-xs">Conversation Transcript</h1>
+                <h1 className="text-sm font-black uppercase tracking-widest truncate max-w-37.5 sm:max-w-xs">Conversation Transcript</h1>
                 <p className="text-[10px] text-muted-foreground mt-0.5 font-bold uppercase tracking-widest truncate">
                   WhatsApp Business API • {new Date(candidate.createdAt).toLocaleString()}
                 </p>

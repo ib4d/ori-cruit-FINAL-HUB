@@ -3,13 +3,13 @@ import path from "path";
 import fs from "fs";
 
 // Ensure data directory exists
-const dataDir = path.join(process.cwd(), "data");
+const DB_PATH = process.env.DB_PATH ?? './data/oricruit.db'
+const dataDir = path.dirname(DB_PATH);
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-const dbPath = path.join(dataDir, "oricruit.db");
-export const db = new Database(dbPath);
+export const db = new Database(DB_PATH);
 
 export function initDb() {
   db.exec(`

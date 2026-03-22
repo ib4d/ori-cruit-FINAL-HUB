@@ -48,7 +48,7 @@ export default function App() {
       <ThemeProvider>
         <ErrorBoundary>
           <Toaster position="bottom-right" />
-          <div className="fixed bottom-6 left-6 z-[9999] flex items-center gap-1 bg-card/90 backdrop-blur-md border border-border p-1.5 shadow-2xl rounded-none">
+          <div className="fixed bottom-6 left-6 z-9999 flex items-center gap-1 bg-card/90 backdrop-blur-md border border-border p-1.5 shadow-2xl rounded-none">
           <div className="flex gap-1 border-r border-border pr-1 mr-1">
             <NavButton onClick={() => window.history.back()}><ChevronLeft size={14} /></NavButton>
             <NavButton onClick={() => window.history.forward()}><ChevronRight size={14} /></NavButton>

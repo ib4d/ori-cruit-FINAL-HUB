@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { db } from "./db.js";
+import { db } from "./db.ts";
 import crypto from "crypto";
-import { broadcast } from "./ws.js";
+import { broadcast } from "./ws.ts";
 import { GoogleGenAI, Type } from "@google/genai";
-import { parseCandidateData } from "./gemini.js";
+import { parseCandidateData } from "./gemini.ts";
 
 let aiClient: GoogleGenAI | null = null;
 

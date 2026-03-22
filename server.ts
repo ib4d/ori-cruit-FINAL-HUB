@@ -1,18 +1,44 @@
 import express from "express";
-import { initDb } from "./src/server/db.js";
-import { apiRouter } from "./src/server/api.js";
-import { initWs } from "./src/server/ws.js";
+import cors from 'cors';
+import 'dotenv/config';
+import { initDb } from "./src/server/db.ts";
+import { apiRouter } from "./src/server/api.ts";
+import { initWs } from "./src/server/ws.ts";
 import path from "path";
 import { createServer } from "http";
 
 async function startServer() {
+  const required = ['GEMINI_API_KEY']
+  const missing = required.filter(k => !process.env[k])
+  if (missing.length) {
+    console.error(`Missing required env vars: ${missing.join(', ')}`)
+    process.exit(1)
+  }
+
   const app = express();
   const httpServer = createServer(app);
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || '3000', 10);
+
+  const allowedOrigins = [
+    `http://localhost:${PORT}`,
+    'http://localhost:5173',
+    'http://localhost:3001',
+    process.env.FRONTEND_URL ?? '',
+  ].filter(Boolean)
+
+  app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }))
 
   // Parse JSON bodies with increased limit for large chat exports
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+  // Health check endpoint
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', ts: Date.now() })
+  })
 
   // Initialize SQLite Database
   initDb();
