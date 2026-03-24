@@ -7,13 +7,18 @@ coverage/
 .env*
 !.env.example
 
+# Secrets and debug artifacts
+.env
 env.json
 metadata.json
 test-*.js
-*.local
+
+# SQLite database — must never be committed
 data/
 *.db
 *.db-shm
 *.db-wal
+
+# Build output
 dist/
-.env
+node_modules/
