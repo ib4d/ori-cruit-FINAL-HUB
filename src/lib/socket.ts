@@ -12,7 +12,9 @@ class SocketManager {
   }
 
   private connect() {
-    const wsUrl = getWebSocketUrl();
+    // Use env var in production so WS goes to Railway, not Vercel
+    const wsUrl = import.meta.env.VITE_WS_URL ?? 
+      `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}`;
     this.socket = new WebSocket(wsUrl);
 
     this.socket.onopen = () => {

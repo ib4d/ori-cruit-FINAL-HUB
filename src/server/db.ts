@@ -1,13 +1,10 @@
 import Database from "better-sqlite3";
-import path from "path";
-import fs from "fs";
+import { mkdirSync } from "fs";
+import { dirname, resolve } from "path";
 
-// Ensure data directory exists
-const DB_PATH = process.env.DB_PATH ?? './data/oricruit.db'
-const dataDir = path.dirname(DB_PATH);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
+// Use DB_PATH env var (set by Railway volume) or fall back to local ./data/
+const DB_PATH = resolve(process.env.DB_PATH ?? "./data/oricruit.db");
+mkdirSync(dirname(DB_PATH), { recursive: true });
 
 export const db = new Database(DB_PATH);
 
